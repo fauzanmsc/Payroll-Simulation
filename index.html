@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <title>Payroll Studio · JEF GROUP</title>
+    <title>Payroll Studio · Simulasi Gaji JEF GROUP</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -12,14 +12,44 @@
     />
     <link rel="stylesheet" href="src/styles/main.css" />
   </head>
-  <body>
+  <body class="is-loading">
+    <!-- Branded Loader Screen -->
+    <div id="appLoader" class="app-loader" role="status" aria-label="Memuat Payroll Studio">
+      <div class="loader-card">
+        <div class="loader-emblem" aria-hidden="true">
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="none">
+            <rect x="3" y="4" width="18" height="16" rx="4" stroke="#ffffff" stroke-width="2" />
+            <path
+              d="M7.5 14.5L10.5 11.5L13 13.5L16.5 9.5"
+              stroke="#a7f3d0"
+              stroke-width="2.4"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+          </svg>
+        </div>
+        <h2 class="loader-title">Payroll Studio<span class="brand-dot">.</span></h2>
+        <p class="loader-sub">JEF GROUP · Simulasi Gaji Karyawan</p>
+        <div class="loader-track" aria-hidden="true">
+          <div class="loader-bar" id="loaderBar"></div>
+        </div>
+        <p class="loader-hint" id="loaderHint">Menyiapkan kalkulator gaji...</p>
+      </div>
+    </div>
+
     <header class="topbar">
       <div class="topbar-inner">
         <div class="brand">
           <div class="brand-mark" aria-hidden="true">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
               <rect x="3" y="4" width="18" height="16" rx="4" stroke="currentColor" stroke-width="2" />
-              <path d="M7.5 14.5L10.5 11.5L13 13.5L16.5 9.5" stroke="#34d399" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" />
+              <path
+                d="M7.5 14.5L10.5 11.5L13 13.5L16.5 9.5"
+                stroke="#34d399"
+                stroke-width="2.2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
             </svg>
           </div>
           <div class="brand-text">
@@ -27,7 +57,7 @@
               <h1>Payroll Studio<span class="brand-dot">.</span></h1>
               <span class="brand-pill">JEF GROUP</span>
             </div>
-            <p class="brand-sub">HR &amp; Finance · Smart Salary Simulation</p>
+            <p class="brand-sub">Kalkulator Simulasi Gaji &amp; Kontrak Kerja</p>
           </div>
         </div>
 
@@ -38,7 +68,7 @@
               <path d="M4 5v6c0 1.66 3.58 3 8 3s8-1.34 8-3V5" />
               <path d="M4 11v6c0 1.66 3.58 3 8 3s8-1.34 8-3v-6" />
             </svg>
-            <span>Database</span>
+            <span>Data Karyawan</span>
             <span class="btn-badge hidden" id="dbCountBadge">0</span>
           </button>
 
@@ -56,7 +86,7 @@
               <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2" />
               <rect x="6" y="14" width="12" height="8" />
             </svg>
-            <span>Cetak Slip</span>
+            <span>Cetak PDF (A4)</span>
           </button>
         </div>
       </div>
@@ -64,11 +94,11 @@
 
     <main class="shell">
       <!-- Collapsible Database Drawer -->
-      <section class="db-drawer hidden" id="dbDrawer" aria-label="Database karyawan">
+      <section class="db-drawer hidden" id="dbDrawer" aria-label="Impor data karyawan">
         <div class="db-drawer-head">
           <div>
-            <h2>Impor Database Karyawan (Opsional)</h2>
-            <p>Unggah CSV atau JSON dari komputer. Data hanya diproses lokal di browser Anda.</p>
+            <h2>Impor Daftar Gaji Karyawan (Opsional)</h2>
+            <p>Unggah file CSV atau JSON dari komputer agar tidak perlu mengetik gaji satu per satu.</p>
           </div>
           <button type="button" class="btn-ghost" id="closeDb">Tutup</button>
         </div>
@@ -85,32 +115,32 @@
             </div>
             <div class="dropzone-copy">
               <strong>Klik atau seret file CSV / JSON ke sini</strong>
-              <span>Wajib memiliki kolom <code>name</code> dan <code>basic</code> (rupiah bulat)</span>
+              <span>Wajib memiliki kolom <code>name</code> dan <code>basic</code> (angka rupiah biasa)</span>
             </div>
           </div>
 
           <div class="db-controls">
             <div class="field">
-              <label for="employee">Pilih karyawan dari sesi impor</label>
+              <label for="employee">Pilih karyawan dari file yang diimpor</label>
               <select id="employee">
-                <option value="">Input manual</option>
+                <option value="">Isi manual</option>
               </select>
             </div>
             <div class="db-actions-row">
               <a class="btn btn-soft" href="assets/templates/database-template.csv" download>
-                Template CSV
+                Unduh Template CSV
               </a>
               <a class="btn btn-soft" href="assets/templates/database-template.json" download>
                 Template JSON
               </a>
-              <button type="button" class="btn-danger-soft" id="clearDb">Hapus Sesi</button>
+              <button type="button" class="btn-danger-soft" id="clearDb">Hapus Data Sesi</button>
             </div>
           </div>
         </div>
 
         <div class="db-status-bar">
-          <p id="dbstatus" class="status-text" role="status">Belum ada database diimpor.</p>
-          <span>100% client-side · Tidak dikirim ke server</span>
+          <p id="dbstatus" class="status-text" role="status">Belum ada file yang diimpor.</p>
+          <span>Aman · Data hanya diproses di perangkat Anda</span>
         </div>
       </section>
 
@@ -127,36 +157,36 @@
                   id="name"
                   class="name-inline"
                   value="Karyawan Contoh"
-                  placeholder="Masukkan nama karyawan..."
+                  placeholder="Ketik nama karyawan..."
                 />
               </div>
             </div>
 
             <div class="view-switch" role="group" aria-label="Mode tampilan form">
-              <button type="button" id="viewTabs" class="is-active">Ringkas</button>
-              <button type="button" id="viewAll">Semua</button>
+              <button type="button" id="viewTabs" class="is-active">Per Langkah</button>
+              <button type="button" id="viewAll">Lihat Semua</button>
             </div>
           </div>
 
-          <!-- Quick Employee Switcher (appears only when DB is loaded) -->
+          <!-- Quick Employee Switcher -->
           <div class="quick-emp-strip hidden" id="quickEmpStrip">
-            <span>Karyawan DB</span>
-            <select id="quickEmployee" aria-label="Ganti cepat karyawan dari database"></select>
+            <span>Pilih Karyawan</span>
+            <select id="quickEmployee" aria-label="Ganti cepat karyawan dari file"></select>
           </div>
 
           <!-- Focused 3-Step Segmented Tabs -->
-          <nav class="step-tabs" id="stepTabs" aria-label="Bagian input simulasi">
+          <nav class="step-tabs" id="stepTabs" aria-label="Langkah simulasi gaji">
             <button type="button" class="step-tab is-active" data-step="contract">
               <span class="step-tab-top">
-                <span class="step-num">01</span>
+                <span class="step-num">Langkah 1</span>
                 <span class="step-metric tnum" id="tabBadgeContract">26 hr</span>
               </span>
-              <span class="step-label">Kontrak &amp; Periode</span>
+              <span class="step-label">Kontrak &amp; Tanggal</span>
             </button>
 
             <button type="button" class="step-tab" data-step="compensation">
               <span class="step-tab-top">
-                <span class="step-num">02</span>
+                <span class="step-num">Langkah 2</span>
                 <span class="step-metric tnum" id="tabBadgeComp">Rp4,6 jt</span>
               </span>
               <span class="step-label">Gaji &amp; Kehadiran</span>
@@ -164,7 +194,7 @@
 
             <button type="button" class="step-tab" data-step="deductions">
               <span class="step-tab-top">
-                <span class="step-num">03</span>
+                <span class="step-num">Langkah 3</span>
                 <span class="step-metric tnum" id="tabBadgeDeduct">-Rp139 rb</span>
               </span>
               <span class="step-label">Potongan</span>
@@ -176,65 +206,72 @@
             <section class="card">
               <div class="card-head">
                 <div>
-                  <h3>Skenario &amp; Periode Payroll</h3>
-                  <p>Pilih skema kontrak lalu atur tanggal periode (Senin–Sabtu).</p>
+                  <h3>Pilih Jenis Kontrak &amp; Periode Gaji</h3>
+                  <p>Hari kerja dihitung Senin–Sabtu (Minggu otomatis libur).</p>
                 </div>
               </div>
 
-              <!-- Visual Scenario Selector synced with hidden native select -->
-              <label class="sr-only" for="mode">Skenario pengupahan</label>
+              <label class="sr-only" for="mode">Jenis kontrak &amp; perhitungan</label>
               <select id="mode" class="sr-only" tabindex="-1" aria-hidden="true">
-                <option value="80full">Kontrak 3 bulan · Full</option>
-                <option value="80pro">Kontrak 3 bulan · Prorata</option>
-                <option value="transition" selected>Transisi 3 bulan → 1 tahun · Prorata</option>
-                <option value="100full">Kontrak 1 tahun · Full</option>
-                <option value="100pro">Kontrak 1 tahun · Prorata</option>
+                <option value="80full">Kontrak 3 Bulan · Penuh (80%)</option>
+                <option value="80pro">Kontrak 3 Bulan · Sesuai Hari Kerja (80%)</option>
+                <option value="transition" selected>
+                  Pindah Kontrak 3 Bulan → 1 Tahun (80% ke 100%)
+                </option>
+                <option value="100full">Kontrak 1 Tahun · Penuh (100%)</option>
+                <option value="100pro">Kontrak 1 Tahun · Sesuai Hari Kerja (100%)</option>
               </select>
 
-              <div class="scenario-grid" id="scenarioCards" role="radiogroup" aria-label="Skenario pengupahan"></div>
+              <div class="scenario-grid" id="scenarioCards" role="radiogroup" aria-label="Jenis kontrak"></div>
 
               <div class="fields">
                 <div class="field">
-                  <label for="start">Awal payroll</label>
+                  <label for="start">Tanggal Awal Periode</label>
                   <input type="date" id="start" value="2026-10-24" />
                 </div>
                 <div class="field">
-                  <label for="end">Akhir payroll</label>
+                  <label for="end">Tanggal Akhir Periode</label>
                   <input type="date" id="end" value="2026-11-23" />
                 </div>
               </div>
 
               <div id="transitionField" class="sub-box">
-                <p class="sub-box-title">Tanggal Transisi Kontrak</p>
+                <p class="sub-box-title">Tanggal Mulai Naik ke Kontrak 1 Tahun (100%)</p>
+                <p class="sub-box-hint">
+                  Hari sebelum tanggal ini dihitung tarif 80%, mulai tanggal ini dihitung tarif penuh 100%.
+                </p>
                 <div class="field">
-                  <label for="transition">Tanggal efektif kontrak 1 tahun (mulai A100)</label>
+                  <label for="transition">Tanggal Efektif Kontrak 1 Tahun</label>
                   <input type="date" id="transition" value="2026-11-13" />
                 </div>
               </div>
 
               <div class="case sub-box">
-                <p class="sub-box-title">Batas Tanggal Hak Upah (Opsional · Prorata)</p>
+                <p class="sub-box-title">Jika Tidak Masuk Sebulan Penuh (Opsional)</p>
+                <p class="sub-box-hint">
+                  Kosongkan bila karyawan aktif selama seluruh periode di atas.
+                </p>
                 <div class="fields">
                   <div class="field">
-                    <label for="activeStart">Mulai hak upah</label>
+                    <label for="activeStart">Tanggal Mulai Aktif Kerja</label>
                     <input type="date" id="activeStart" />
                   </div>
                   <div class="field">
-                    <label for="activeEnd">Akhir hak upah</label>
+                    <label for="activeEnd">Tanggal Terakhir Kerja</label>
                     <input type="date" id="activeEnd" />
                   </div>
                 </div>
               </div>
 
               <details class="disclosure">
-                <summary>Hari libur tambahan (opsional)</summary>
+                <summary>Tambah tanggal libur nasional / cuti bersama (opsional)</summary>
                 <div class="disclosure-body">
                   <div class="field">
-                    <label for="holidays">Tanggal libur (pisahkan dengan koma)</label>
+                    <label for="holidays">Daftar tanggal libur (pisahkan dengan koma)</label>
                     <input id="holidays" placeholder="2026-11-01, 2026-11-10" />
                   </div>
                   <p class="note">
-                    Format <code>YYYY-MM-DD</code>. Mengurangi pembagi &amp; hari hak upah bila jatuh Senin–Sabtu.
+                    Format <code>YYYY-MM-DD</code>. Hari libur di hari Senin–Sabtu otomatis mengurangi total hari kerja.
                   </p>
                 </div>
               </details>
@@ -243,8 +280,8 @@
 
               <div class="workday-box">
                 <div class="counts">
-                  <span>Periode: <strong class="tnum" id="workdays">26 hari kerja</strong></span>
-                  <span>Hak upah: <strong class="tnum" id="paidDays">26 hari hak upah</strong></span>
+                  <span>Total periode: <strong class="tnum" id="workdays">26 hari kerja</strong></span>
+                  <span>Hari dibayar: <strong class="tnum" id="paidDays">26 hari</strong></span>
                 </div>
                 <div class="strip" aria-hidden="true">
                   <i id="bar80"></i>
@@ -252,12 +289,12 @@
                 </div>
                 <div class="counts">
                   <span>
-                    <span class="legend-dot a80"></span>
-                    <span class="tnum" id="count80">A80: 17 hari</span>
+                    <span class="legend-dot rate-80"></span>
+                    <span class="tnum" id="count80">Kontrak 3 Bln (80%): 17 hari</span>
                   </span>
                   <span>
-                    <span class="legend-dot a100"></span>
-                    <span class="tnum" id="count100">A100: 9 hari</span>
+                    <span class="legend-dot rate-100"></span>
+                    <span class="tnum" id="count100">Kontrak 1 Thn (100%): 9 hari</span>
                   </span>
                 </div>
               </div>
@@ -276,12 +313,12 @@
             <section class="card">
               <div class="card-head">
                 <div>
-                  <h3>Struktur Upah Tetap (100%)</h3>
-                  <p>Tarif kontrak 3 bulan otomatis dihitung 80% dari seluruh komponen ini.</p>
+                  <h3>Gaji &amp; Tunjangan Bulanan (Tarif 100%)</h3>
+                  <p>Masukkan nominal penuh bulanan. Untuk kontrak 3 bulan otomatis dikali 80%.</p>
                 </div>
                 <div class="pill-pair">
-                  <span class="stat-chip a80 tnum">A80: <span id="base80"></span></span>
-                  <span class="stat-chip a100 tnum">A100: <span id="base100"></span></span>
+                  <span class="stat-chip rate-80 tnum">Tarif 80%: <span id="base80"></span></span>
+                  <span class="stat-chip rate-100 tnum">Tarif 100%: <span id="base100"></span></span>
                 </div>
               </div>
 
@@ -291,18 +328,18 @@
             <section class="card">
               <div class="card-head">
                 <div>
-                  <h3>Tunjangan Kehadiran</h3>
-                  <p>Tarif Rp25.000/hari hadir. Hari dinas hanya mengurangi tunjangan kehadiran.</p>
+                  <h3>Uang Kehadiran (Rp25.000 / Hari)</h3>
+                  <p>Hari dinas atau tidak masuk hanya mengurangi uang kehadiran, tidak memotong gaji pokok.</p>
                 </div>
               </div>
 
               <div class="fields">
                 <div class="field">
-                  <label for="dutyDays">Hari dinas</label>
+                  <label for="dutyDays">Jumlah Hari Dinas Luar</label>
                   <input type="number" min="0" step="1" id="dutyDays" value="2" />
                 </div>
                 <div class="field">
-                  <label for="absence">Hari tidak hadir lainnya</label>
+                  <label for="absence">Hari Tidak Masuk Lainnya</label>
                   <input type="number" min="0" step="1" id="absence" value="0" />
                 </div>
               </div>
@@ -311,7 +348,7 @@
 
               <div class="attendance-summary-pill">
                 <span>
-                  Hari hadir dibayar: <strong class="tnum" id="attendanceDaysText">24 hari</strong> × Rp25.000
+                  Hadir dibayar: <strong class="tnum" id="attendanceDaysText">24 hari</strong> × Rp25.000
                 </span>
                 <strong class="tnum" id="attendanceMoneyText">Rp600.000</strong>
               </div>
@@ -322,15 +359,15 @@
             <section class="card">
               <div class="card-head">
                 <div>
-                  <h3>Pendapatan Variabel (Opsional)</h3>
-                  <p>Diinput sesuai realisasi aktual; tidak diprorata otomatis.</p>
+                  <h3>Bonus &amp; Tambahan Lain (Opsional)</h3>
+                  <p>Diisi sesuai nominal yang diterima bulan ini (tidak dibagi per hari).</p>
                 </div>
               </div>
               <div class="fields" id="extraFields"></div>
             </section>
 
             <div class="step-footer" data-step-nav>
-              <button type="button" class="btn-ghost" data-goto="contract">← Kontrak</button>
+              <button type="button" class="btn-ghost" data-goto="contract">← Kontrak &amp; Tanggal</button>
               <button type="button" class="btn-primary" data-goto="deductions">
                 Lanjut: Potongan →
               </button>
@@ -342,8 +379,8 @@
             <section class="card">
               <div class="card-head">
                 <div>
-                  <h3>Potongan Payroll</h3>
-                  <p>Nominal aktual yang dibebankan pada periode ini. Tidak diprorata otomatis.</p>
+                  <h3>Potongan Gaji</h3>
+                  <p>Isi nominal BPJS, pajak, atau potongan lain untuk bulan ini.</p>
                 </div>
               </div>
 
@@ -351,9 +388,9 @@
 
               <label class="toggle-row" for="autoBpjs">
                 <div class="toggle-copy">
-                  <strong>Nonaktifkan BPJS untuk kontrak 3 bulan murni</strong>
+                  <strong>Tidak potong BPJS jika masih Kontrak 3 Bulan penuh</strong>
                   <span>
-                    Opsi simulasi saja. Untuk skenario transisi &amp; kontrak 1 tahun, BPJS tetap mengikuti input.
+                    Berlaku hanya pada simulasi kontrak 3 bulan murni. Saat pindah kontrak / 1 tahun, BPJS tetap dihitung.
                   </span>
                 </div>
                 <span class="switch">
@@ -363,7 +400,7 @@
               </label>
 
               <p class="note">
-                Verifikasi kewajiban BPJS, PPh 21, dan kebijakan pengupahan aktual secara terpisah.
+                Catatan: Pastikan kembali aturan BPJS, pajak PPh 21, dan kebijakan perusahaan Anda secara terpisah.
               </p>
             </section>
 
@@ -383,10 +420,10 @@
           <section class="hero-card">
             <div class="hero-top">
               <p class="hero-meta" id="resultName">Karyawan Contoh · 2026-10-24 — 2026-11-23</p>
-              <span class="hero-pill" id="scenarioName">Transisi 3 bulan → 1 tahun · Prorata</span>
+              <span class="hero-pill" id="scenarioName">Pindah Kontrak 3 Bulan → 1 Tahun</span>
             </div>
 
-            <p class="hero-kicker">Estimasi Take-Home Pay</p>
+            <p class="hero-kicker">Estimasi Gaji Bersih Diterima</p>
             <h2 class="hero-net tnum" id="net">Rp4.459.675</h2>
 
             <div class="ratio-bar" aria-hidden="true">
@@ -396,7 +433,7 @@
 
             <div class="hero-metrics">
               <div class="hero-metric">
-                <span>Pendapatan bruto</span>
+                <span>Pendapatan kotor</span>
                 <strong class="tnum" id="gross">—</strong>
               </div>
               <div class="hero-metric">
@@ -404,7 +441,7 @@
                 <strong class="tnum" id="deductions">—</strong>
               </div>
               <div class="hero-metric">
-                <span>Kehadiran</span>
+                <span>Hari hadir</span>
                 <strong class="tnum" id="attendanceMetric">—</strong>
               </div>
             </div>
@@ -416,7 +453,7 @@
                   <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2" />
                   <rect x="6" y="14" width="12" height="8" />
                 </svg>
-                Cetak / PDF
+                Cetak PDF
               </button>
               <button type="button" class="btn-hero" id="export">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -439,7 +476,7 @@
           <section class="result-card">
             <div class="result-tabs no-print" role="tablist" aria-label="Tampilan detail hasil">
               <button type="button" class="result-tab is-active" id="tabBreakdown" role="tab" aria-selected="true">
-                Rincian Slip
+                Rincian Gaji
               </button>
               <button type="button" class="result-tab" id="tabCompare" role="tab" aria-selected="false">
                 Bandingkan 5 Skenario
@@ -453,15 +490,15 @@
               <table>
                 <thead>
                   <tr>
-                    <th>Komponen / dasar hitung</th>
+                    <th>Komponen &amp; cara hitung</th>
                     <th>Nominal</th>
                   </tr>
                 </thead>
                 <tbody id="breakdown"></tbody>
               </table>
               <p class="note" id="roundingNote">
-                Pembulatan tiap komponen upah tetap per skema menggunakan rupiah terdekat; selisih
-                pembulatan disesuaikan pada komponen terakhir agar subtotal tepat sesuai formula.
+                Setiap komponen gaji dibulatkan ke rupiah terdekat; selisih pembulatan disesuaikan pada
+                baris terakhir agar total tetap akurat.
               </p>
             </div>
 
@@ -469,8 +506,7 @@
             <div id="paneCompare" class="hidden no-print" role="tabpanel">
               <div class="compare-list" id="comparison"></div>
               <p class="note">
-                Klik skenario mana pun untuk langsung menerapkannya. Skenario Full mengabaikan batas
-                tanggal hak upah; transisi menggunakan tanggal efektif kontrak.
+                Klik salah satu skenario di atas untuk langsung melihat hasil hitungannya.
               </p>
             </div>
           </section>
@@ -479,6 +515,83 @@
     </main>
 
     <footer>Payroll Studio · JEF GROUP · Alat simulasi internal, bukan slip gaji resmi</footer>
+
+    <!-- Dedicated A4 Landscape 1-Page Print Sheet -->
+    <section id="printSheet" class="print-only print-sheet" aria-hidden="true">
+      <div class="print-header">
+        <div class="print-brand">
+          <div class="print-brand-mark">PS</div>
+          <div>
+            <h2>Payroll Studio · JEF GROUP</h2>
+            <p>Ringkasan Simulasi Gaji Karyawan (Bukan Slip Gaji Resmi)</p>
+          </div>
+        </div>
+        <div class="print-emp-info">
+          <strong id="printName">Karyawan Contoh</strong>
+          <span id="printPeriodScenario">2026-10-24 — 2026-11-23 · Pindah Kontrak 3 Bulan → 1 Tahun</span>
+        </div>
+      </div>
+
+      <div class="print-body">
+        <div class="print-box">
+          <h3 class="print-box-title">Rincian Pendapatan</h3>
+          <table class="print-table">
+            <thead>
+              <tr>
+                <th>Komponen &amp; Dasar Hitung</th>
+                <th>Nominal</th>
+              </tr>
+            </thead>
+            <tbody id="printIncomeBody"></tbody>
+          </table>
+        </div>
+
+        <div class="print-right">
+          <div class="print-net-box">
+            <div class="print-net-label">Estimasi Gaji Bersih Diterima</div>
+            <div class="print-net-value" id="printNet">Rp4.459.675</div>
+            <div class="print-kpis">
+              <div class="print-kpi">
+                <span>Total Pendapatan (Kotor)</span>
+                <strong id="printGross">—</strong>
+              </div>
+              <div class="print-kpi">
+                <span>Total Potongan</span>
+                <strong id="printDeduct">—</strong>
+              </div>
+              <div class="print-kpi">
+                <span>Hari Kerja &amp; Tarif</span>
+                <strong id="printDays">—</strong>
+              </div>
+              <div class="print-kpi">
+                <span>Uang Kehadiran</span>
+                <strong id="printAttendance">—</strong>
+              </div>
+            </div>
+          </div>
+
+          <div class="print-box">
+            <h3 class="print-box-title">Rincian Potongan</h3>
+            <table class="print-table">
+              <thead>
+                <tr>
+                  <th>Jenis Potongan</th>
+                  <th>Nominal</th>
+                </tr>
+              </thead>
+              <tbody id="printDeductBody"></tbody>
+            </table>
+          </div>
+
+          <p class="print-note">
+            Dokumen ini dihasilkan dari <strong>Payroll Studio · JEF GROUP</strong> untuk keperluan
+            simulasi internal dan bukan merupakan slip gaji resmi. Pembulatan setiap komponen gaji tetap
+            menggunakan rupiah terdekat dengan penyesuaian pada baris terakhir. Verifikasi BPJS, PPh 21,
+            dan kebijakan penggajian dilakukan secara terpisah.
+          </p>
+        </div>
+      </div>
+    </section>
 
     <div id="toast" class="toast" role="status" aria-live="polite"></div>
 

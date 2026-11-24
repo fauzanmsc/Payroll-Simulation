@@ -39,16 +39,16 @@
       start > end ||
       (Date.parse(end) - Date.parse(start)) / MS_PER_DAY > 366
     ) {
-      throw new Error('Periksa periode payroll (maksimal 367 hari).');
+      throw new Error('Periksa tanggal periode gaji (maksimal 367 hari).');
     }
 
     if (holidays.some((h) => !isValidDate(h))) {
-      throw new Error('Format hari libur tambahan tidak valid.');
+      throw new Error('Format tanggal hari libur tidak valid (gunakan YYYY-MM-DD).');
     }
 
     const work = buildWorkCalendar(start, end, new Set(holidays));
     if (!work.length) {
-      throw new Error('Tidak ada hari kerja dalam periode payroll.');
+      throw new Error('Tidak ada hari kerja dalam periode yang dipilih.');
     }
 
     return {
@@ -70,11 +70,11 @@
         (period.b && !isValidDate(period.b)) ||
         (period.a && period.b && period.a > period.b))
     ) {
-      throw new Error('Periksa tanggal hak upah.');
+      throw new Error('Periksa tanggal mulai/akhir masuk kerja.');
     }
 
     if (mode === 'transition' && !isValidDate(period.t)) {
-      throw new Error('Isi tanggal efektif kontrak 1 tahun.');
+      throw new Error('Isi tanggal mulai kontrak 1 tahun (tarif 100%).');
     }
 
     const activeDays = isFull
@@ -95,16 +95,19 @@
     const base = SALARY_FIELDS.reduce((sum, [id]) => sum + getAmount(id), 0);
     let fixedTotal = 0;
 
-    for (const [code, days, rate] of [
-      ['A80', n80, 0.8],
-      ['A100', n100, 1],
-    ]) {
+    const phases = [
+      ['Kontrak 3 Bln (80%)', 'Subtotal Kontrak 3 Bulan (80%)', n80, 0.8],
+      ['Kontrak 1 Thn (100%)', 'Subtotal Kontrak 1 Tahun (100%)', n100, 1],
+    ];
+
+    for (const [phaseTag, subtotalLabel, days, rate] of phases) {
       if (!days) continue;
 
       const factor = (rate * days) / den;
       const subtotal = Math.round(base * factor);
       let used = 0;
       const nonzero = SALARY_FIELDS.filter(([id]) => getAmount(id) > 0);
+      const showPrefix = mode === 'transition';
 
       nonzero.forEach(([id, label], index) => {
         const componentVal = getAmount(id);
@@ -112,17 +115,19 @@
           index === nonzero.length - 1 ? subtotal - used : Math.round(componentVal * factor);
         used += amount;
         rows.push({
-          label: `${code} · ${label}`,
-          detail: `${formatRupiah(componentVal)} × ${rate * 100}% × ${days}/${den}`,
+          label: showPrefix ? `${phaseTag} · ${label}` : label,
+          detail: `${formatRupiah(componentVal)} × ${rate * 100}% × ${days}/${den} hari`,
           amount,
+          section: 'income',
         });
       });
 
       rows.push({
-        label: `Subtotal ${code}`,
-        detail: `${days} hari kerja / ${den} hari`,
+        label: subtotalLabel,
+        detail: `${days} dari ${den} hari kerja`,
         amount: subtotal,
         type: 'total',
+        section: 'income',
       });
       fixedTotal += subtotal;
     }
@@ -133,22 +138,28 @@
     const attendanceMoney = attendance * ATTENDANCE_RATE;
 
     rows.push({
-      label: 'Tunjangan kehadiran',
-      detail: `${n} − ${duty} dinas − ${abs} absen = ${attendance} hari × Rp25.000`,
+      label: 'Tunjangan Kehadiran',
+      detail: `${n} hari − ${duty} dinas − ${abs} absen = ${attendance} hari × Rp25.000`,
       amount: attendanceMoney,
+      section: 'income',
     });
 
     let gross = fixedTotal + attendanceMoney;
     for (const [id, label] of EXTRA_FIELDS) {
       const amount = Math.round(getAmount(id));
       gross += amount;
-      rows.push({ label, amount });
+      rows.push({
+        label,
+        amount,
+        section: 'income',
+      });
     }
 
     rows.push({
-      label: 'Gross salary',
+      label: 'Total Pendapatan (Kotor)',
       amount: gross,
       type: 'total',
+      section: 'income',
     });
 
     let deductions = 0;
@@ -158,28 +169,31 @@
       deductions += amount;
       rows.push({
         label,
-        detail: exempt ? 'Dinonaktifkan sesuai pilihan simulasi' : '',
+        detail: exempt ? 'Tidak dipotong (pilihan simulasi kontrak 3 bulan)' : '',
         amount: -amount,
         type: 'negative',
+        section: 'deduction',
       });
     }
 
     rows.push({
-      label: 'Total potongan',
+      label: 'Total Potongan',
       amount: -deductions,
       type: 'total',
+      section: 'deduction',
     });
 
     const net = gross - deductions;
     rows.push({
-      label: 'Take-home pay',
+      label: 'Gaji Bersih Diterima',
       amount: net,
       type: 'net',
+      section: 'net',
     });
 
     const warning =
       duty + abs > n
-        ? 'Hari dinas + absen melebihi hari hak upah. Koreksi input; tunjangan sementara Rp0.'
+        ? 'Jumlah hari dinas + absen melebihi hari kerja dibayar. Periksa kembali angka input.'
         : '';
 
     return {
@@ -192,6 +206,7 @@
       n100,
       den,
       attendance,
+      attendanceMoney,
       warning,
     };
   }

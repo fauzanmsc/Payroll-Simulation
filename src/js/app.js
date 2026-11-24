@@ -25,8 +25,36 @@
   let employeeDb = [];
   let activeStep = 'contract';
   let viewMode = 'tabs'; // 'tabs' | 'all'
-  let activeResultTab = 'breakdown'; // 'breakdown' | 'compare'
   let toastTimer = null;
+
+  function runLoaderScreen() {
+    const loader = $('appLoader');
+    const bar = $('loaderBar');
+    const hint = $('loaderHint');
+    if (!loader || !bar) return;
+
+    const reducedMotion = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+    if (reducedMotion) {
+      bar.style.width = '100%';
+      loader.classList.add('is-done');
+      document.body.classList.remove('is-loading');
+      return;
+    }
+
+    requestAnimationFrame(() => {
+      bar.style.width = '68%';
+    });
+
+    setTimeout(() => {
+      bar.style.width = '100%';
+      if (hint) hint.textContent = 'Siap digunakan!';
+    }, 320);
+
+    setTimeout(() => {
+      loader.classList.add('is-done');
+      document.body.classList.remove('is-loading');
+    }, 620);
+  }
 
   function showToast(message) {
     const el = $('toast');
@@ -134,7 +162,6 @@
   }
 
   function setResultTab(tab) {
-    activeResultTab = tab;
     const isBreakdown = tab === 'breakdown';
     $('tabBreakdown').classList.toggle('is-active', isBreakdown);
     $('tabBreakdown').setAttribute('aria-selected', String(isBreakdown));
@@ -169,7 +196,7 @@
     el.classList.toggle('hidden', !message);
   }
 
-  function appendBreakdownRow(tbody, row) {
+  function appendTableRow(tbody, row) {
     const tr = document.createElement('tr');
     tr.className = row.type || '';
 
@@ -190,6 +217,33 @@
 
     tr.append(labelCell, valueCell);
     tbody.append(tr);
+  }
+
+  function renderPrintSheet(employeeName, mode, result) {
+    $('printName').textContent = employeeName;
+    $('printPeriodScenario').textContent = `${val('start')} — ${val('end')} · ${MODES[mode]}`;
+    $('printNet').textContent = formatRupiah(result.net);
+    $('printGross').textContent = formatRupiah(result.gross);
+    $('printDeduct').textContent = formatRupiah(result.deductions);
+
+    const dayParts = [];
+    if (result.n80) dayParts.push(`${result.n80} hr (80%)`);
+    if (result.n100) dayParts.push(`${result.n100} hr (100%)`);
+    $('printDays').textContent = `${result.n}/${result.den} hr${dayParts.length ? ' · ' + dayParts.join(' + ') : ''}`;
+    $('printAttendance').textContent = `${result.attendance} hr (${formatRupiah(result.attendanceMoney)})`;
+
+    const incomeBody = $('printIncomeBody');
+    const deductBody = $('printDeductBody');
+    incomeBody.replaceChildren();
+    deductBody.replaceChildren();
+
+    for (const row of result.rows) {
+      if (row.section === 'income') {
+        appendTableRow(incomeBody, row);
+      } else if (row.section === 'deduction') {
+        appendTableRow(deductBody, row);
+      }
+    }
   }
 
   function renderComparisonList(currentMode, currentNet, period, values) {
@@ -225,7 +279,7 @@
 
       let badgeHtml = '<span class="delta-badge is-zero">—</span>';
       if (modeKey === currentMode) {
-        badgeHtml = '<span class="delta-badge is-active">Aktif</span>';
+        badgeHtml = '<span class="delta-badge is-active">Sedang Dipilih</span>';
       } else if (result && typeof currentNet === 'number') {
         const diff = result.net - currentNet;
         if (diff > 0) {
@@ -298,8 +352,8 @@
 
       $('workdays').textContent = `${result.den} hari kerja`;
       $('paidDays').textContent = `${result.n} hari`;
-      $('count80').textContent = `A80: ${result.n80} hari`;
-      $('count100').textContent = `A100: ${result.n100} hari`;
+      $('count80').textContent = `Kontrak 3 Bln (80%): ${result.n80} hari`;
+      $('count100').textContent = `Kontrak 1 Thn (100%): ${result.n100} hari`;
       $('bar80').style.width = `${(100 * result.n80) / result.den}%`;
       $('bar100').style.width = `${(100 * result.n100) / result.den}%`;
 
@@ -312,20 +366,19 @@
       $('gross').textContent = formatRupiah(result.gross);
       $('deductions').textContent = formatRupiah(result.deductions);
 
-      // Update Hero composition bar (THP vs Deductions)
       const totalFlow = Math.max(1, result.gross);
       const deductPct = Math.min(100, Math.max(0, (result.deductions / totalFlow) * 100));
       const netPct = Math.max(0, 100 - deductPct);
       $('ratioNet').style.width = `${netPct.toFixed(1)}%`;
       $('ratioDeduct').style.width = `${deductPct.toFixed(1)}%`;
 
-      // Update live tab badges
       $('tabBadgeContract').textContent = `${result.n}/${result.den} hr`;
       $('tabBadgeComp').textContent = formatCompactRupiah(result.gross);
       $('tabBadgeDeduct').textContent = formatCompactRupiah(-result.deductions);
 
-      result.rows.forEach((row) => appendBreakdownRow($('breakdown'), row));
+      result.rows.forEach((row) => appendTableRow($('breakdown'), row));
       renderComparisonList(mode, result.net, period, values);
+      renderPrintSheet(employeeName, mode, result);
     } catch (error) {
       showAlert('dateError', error.message);
       showAlert('resultWarning', error.message);
@@ -379,7 +432,7 @@
     const selects = [$('employee'), $('quickEmployee')];
 
     for (const sel of selects) {
-      sel.replaceChildren(new Option('Input manual', ''));
+      sel.replaceChildren(new Option('Isi manual', ''));
       employeeDb.forEach((record, index) => {
         sel.add(new Option(`${record.name} · ${record.id}`, String(index)));
       });
@@ -410,7 +463,7 @@
     } catch (error) {
       statusEl.textContent = 'Impor gagal: ' + error.message;
       statusEl.classList.add('is-err');
-      showToast('Gagal membaca file database.');
+      showToast('Gagal membaca file data karyawan.');
     }
   }
 
@@ -436,8 +489,8 @@
     $('file').value = '';
     const statusEl = $('dbstatus');
     statusEl.className = 'status-text';
-    statusEl.textContent = 'Database sesi dihapus. Nilai input saat ini tetap dipertahankan.';
-    showToast('Database sesi dihapus.');
+    statusEl.textContent = 'Data sesi dihapus. Nilai input saat ini tetap dipertahankan.';
+    showToast('Data sesi dihapus.');
   }
 
   function handleExportCsv() {
@@ -463,7 +516,7 @@
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
     link.href = url;
-    link.download = 'payroll-simulation.csv';
+    link.download = 'simulasi-gaji.csv';
     link.click();
     setTimeout(() => URL.revokeObjectURL(url), 1000);
     showToast('File CSV berhasil diekspor.');
@@ -479,7 +532,7 @@
         .join('\n');
 
       await navigator.clipboard.writeText(header + body);
-      showToast('Ringkasan slip berhasil disalin.');
+      showToast('Ringkasan gaji berhasil disalin.');
     } catch {
       showToast('Tidak dapat menyalin; gunakan Ekspor CSV.');
     }
@@ -553,4 +606,5 @@
   bindEvents();
   syncWorkspaceView();
   render();
+  runLoaderScreen();
 })(window);

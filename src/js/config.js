@@ -15,63 +15,63 @@
   });
 
   const SALARY_FIELDS = [
-    ['basic', 'Gaji pokok', 2400000],
-    ['position', 'Tunjangan jabatan', 1000000],
-    ['grade', 'Tunjangan grade', 800000],
-    ['group', 'Tunjangan golongan', 200000],
-    ['communication', 'Tunjangan komunikasi', 200000],
-    ['otherFixed', 'Tunjangan tetap lainnya', 0],
+    ['basic', 'Gaji Pokok', 2400000],
+    ['position', 'Tunjangan Jabatan', 1000000],
+    ['grade', 'Tunjangan Grade', 800000],
+    ['group', 'Tunjangan Golongan', 200000],
+    ['communication', 'Tunjangan Komunikasi', 200000],
+    ['otherFixed', 'Tunjangan Tetap Lainnya', 0],
   ];
 
   const EXTRA_FIELDS = [
     ['incentive', 'Insentif', 0],
     ['bonus', 'Bonus', 0],
-    ['dutyMoney', 'Uang dinas', 0],
-    ['otherIncome', 'Pendapatan lainnya', 0],
+    ['dutyMoney', 'Uang Dinas', 0],
+    ['otherIncome', 'Tambahan Lainnya', 0],
   ];
 
   const DEDUCT_FIELDS = [
     ['bpjsTK', 'BPJS Ketenagakerjaan', 90000],
     ['bpjsKes', 'BPJS Kesehatan', 48787],
-    ['tax', 'PPh 21', 0],
-    ['otherDeduction', 'Potongan lainnya', 0],
+    ['tax', 'PPh 21 (Pajak)', 0],
+    ['otherDeduction', 'Potongan Lainnya', 0],
   ];
 
   const ALL_FIELDS = [...SALARY_FIELDS, ...EXTRA_FIELDS, ...DEDUCT_FIELDS];
 
   const MODES = {
-    '80full': 'Kontrak 3 bulan · Full',
-    '80pro': 'Kontrak 3 bulan · Prorata',
-    transition: 'Transisi 3 bulan → 1 tahun · Prorata',
-    '100full': 'Kontrak 1 tahun · Full',
-    '100pro': 'Kontrak 1 tahun · Prorata',
+    '80full': 'Kontrak 3 Bulan · Penuh (80%)',
+    '80pro': 'Kontrak 3 Bulan · Sesuai Hari Kerja (80%)',
+    transition: 'Pindah Kontrak 3 Bulan → 1 Tahun (80% ke 100%)',
+    '100full': 'Kontrak 1 Tahun · Penuh (100%)',
+    '100pro': 'Kontrak 1 Tahun · Sesuai Hari Kerja (100%)',
   };
 
   const MODE_META = {
     '80full': {
-      title: 'Kontrak 3 Bulan',
-      tag: '80% Full',
-      desc: 'Periode penuh tanpa prorata',
+      title: 'Kontrak 3 Bulan · Penuh',
+      tag: 'Tarif 80%',
+      desc: 'Masuk penuh 1 periode, terima 80% gaji bulanan',
     },
     '80pro': {
-      title: 'Kontrak 3 Bulan',
-      tag: '80% Prorata',
-      desc: 'Berdasarkan hari aktif kerja',
+      title: 'Kontrak 3 Bulan · Sebagian Hari',
+      tag: '80% Sesuai Hari',
+      desc: 'Dihitung sesuai jumlah hari aktif kerja (tarif 80%)',
     },
     transition: {
-      title: 'Transisi 3 Bln → 1 Thn',
+      title: 'Pindah Kontrak 3 Bulan → 1 Tahun',
       tag: '80% → 100%',
-      desc: 'Berubah tarif di tanggal efektif',
+      desc: 'Hari awal tarif 80%, mulai tanggal efektif naik jadi 100%',
     },
     '100full': {
-      title: 'Kontrak 1 Tahun',
-      tag: '100% Full',
-      desc: 'Periode penuh tarif 100%',
+      title: 'Kontrak 1 Tahun · Penuh',
+      tag: 'Tarif 100%',
+      desc: 'Masuk penuh 1 periode, terima 100% gaji bulanan',
     },
     '100pro': {
-      title: 'Kontrak 1 Tahun',
-      tag: '100% Prorata',
-      desc: 'Tarif 100% sesuai hari aktif',
+      title: 'Kontrak 1 Tahun · Sebagian Hari',
+      tag: '100% Sesuai Hari',
+      desc: 'Dihitung sesuai jumlah hari aktif kerja (tarif 100%)',
     },
   };
 
