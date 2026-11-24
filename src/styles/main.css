@@ -1,0 +1,456 @@
+:root {
+  --navy: #14243b;
+  --blue: #2459d4;
+  --muted: #64748b;
+  --line: #e2e8f0;
+  --bg: #f1f5f9;
+  --green: #087d69;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font: 14px/1.5 system-ui, sans-serif;
+  background: var(--bg);
+  color: var(--navy);
+}
+
+header {
+  background: var(--navy);
+  color: white;
+  padding: 25px max(20px, calc((100vw - 1320px) / 2));
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 15px;
+}
+
+header h1 {
+  margin: 0;
+  font-size: 26px;
+  letter-spacing: -1px;
+}
+
+header h1 .brand-dot {
+  color: #72dfcd;
+}
+
+header p {
+  margin: 3px 0;
+  color: #bcc9dc;
+}
+
+header small {
+  border: 1px solid #52627b;
+  padding: 7px 12px;
+  border-radius: 30px;
+  white-space: nowrap;
+}
+
+main {
+  max-width: 1360px;
+  margin: auto;
+  padding: 24px 20px 50px;
+}
+
+.intro {
+  display: flex;
+  justify-content: space-between;
+  align-items: end;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.intro h2 {
+  margin: 0;
+  font-size: 25px;
+  letter-spacing: -0.7px;
+}
+
+.intro p {
+  margin: 4px 0;
+  color: var(--muted);
+}
+
+.layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1.12fr) minmax(0, 1fr);
+  gap: 20px;
+  align-items: start;
+}
+
+.panel {
+  background: white;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  padding: 20px;
+  margin-bottom: 16px;
+  box-shadow: 0 3px 12px #14243b08;
+}
+
+.panel h3 {
+  margin: 0 0 4px;
+  font-size: 17px;
+}
+
+.sub {
+  color: var(--muted);
+  font-size: 12px;
+  margin: 0 0 16px;
+}
+
+.fields {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.wide {
+  grid-column: 1 / -1;
+}
+
+label {
+  display: block;
+  font-weight: 600;
+  font-size: 12px;
+  margin-bottom: 5px;
+}
+
+input,
+select,
+button {
+  font: inherit;
+}
+
+input,
+select {
+  width: 100%;
+  border: 1px solid #cbd5e1;
+  padding: 10px 11px;
+  border-radius: 9px;
+  background: #fff;
+  color: var(--navy);
+  min-width: 0;
+}
+
+input:focus,
+select:focus {
+  outline: 2px solid #9cb7ff;
+  border-color: var(--blue);
+}
+
+input[readonly] {
+  background: #f1f5f9;
+}
+
+button,
+.btn {
+  border: 0;
+  border-radius: 9px;
+  padding: 10px 14px;
+  cursor: pointer;
+  font-weight: 650;
+  background: var(--blue);
+  color: white;
+  text-decoration: none;
+  display: inline-block;
+}
+
+.secondary {
+  background: #e8eef7;
+  color: var(--navy);
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.summary {
+  background: linear-gradient(125deg, #14243b, #234d78);
+  color: white;
+  border: 0;
+  padding: 24px;
+}
+
+.summary p {
+  margin: 0;
+  color: #c9d9ec;
+}
+
+.summary h2 {
+  font-size: clamp(28px, 4vw, 42px);
+  margin: 6px 0 16px;
+  letter-spacing: -1.5px;
+}
+
+.metrics {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.metric {
+  background: #ffffff12;
+  padding: 12px;
+  border-radius: 10px;
+}
+
+.metric span {
+  display: block;
+  font-size: 12px;
+  color: #c9d9ec;
+}
+
+.metric strong {
+  font-size: 17px;
+}
+
+.strip {
+  display: flex;
+  height: 9px;
+  border-radius: 20px;
+  overflow: hidden;
+  background: #e2e8f0;
+  margin: 10px 0;
+}
+
+.strip i {
+  background: #7896ce;
+}
+
+.strip b {
+  background: #0fa78a;
+}
+
+.counts {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  font-size: 12px;
+  color: var(--muted);
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+th,
+td {
+  text-align: left;
+  padding: 10px 5px;
+  border-bottom: 1px solid var(--line);
+  vertical-align: top;
+}
+
+th:last-child,
+td:last-child {
+  text-align: right;
+  white-space: nowrap;
+}
+
+td small {
+  display: block;
+  color: var(--muted);
+  font-size: 11px;
+}
+
+tr.total td {
+  font-weight: 750;
+  background: #f3f6fa;
+}
+
+tr.net td {
+  color: var(--green);
+  font-weight: 800;
+  font-size: 16px;
+}
+
+.negative {
+  color: #b42318;
+}
+
+.note {
+  font-size: 12px;
+  color: var(--muted);
+  margin-top: 12px;
+}
+
+.alert {
+  padding: 10px 12px;
+  background: #fff4e5;
+  color: #92400e;
+  border-radius: 9px;
+  margin: 10px 0;
+  font-size: 12px;
+}
+
+.ok {
+  color: var(--green);
+}
+
+.hidden {
+  display: none !important;
+}
+
+footer {
+  text-align: center;
+  color: var(--muted);
+  font-size: 12px;
+  padding: 10px;
+}
+
+.badge {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--blue);
+  background: #e8efff;
+  padding: 4px 9px;
+  border-radius: 20px;
+  display: inline-block;
+  margin-bottom: 8px;
+}
+
+.check {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 500;
+  margin-top: 12px;
+}
+
+.check input {
+  width: auto;
+}
+
+.divider {
+  border-top: 1px solid var(--line);
+  margin: 16px 0;
+}
+
+.file {
+  font-size: 12px;
+}
+
+.scenario {
+  font-weight: 700;
+}
+
+.result {
+  position: sticky;
+  top: 16px;
+}
+
+.dbstatus {
+  overflow-wrap: anywhere;
+}
+
+.scenario-btn {
+  font-size: 11px;
+  text-align: left;
+  padding: 6px 8px;
+}
+
+@media (max-width: 850px) {
+  .layout {
+    grid-template-columns: 1fr;
+  }
+
+  .result {
+    position: static;
+  }
+
+  .intro {
+    align-items: start;
+    flex-direction: column;
+  }
+}
+
+@media (max-width: 480px) {
+  header {
+    padding: 20px 16px;
+  }
+
+  header small {
+    display: none;
+  }
+
+  main {
+    padding: 16px 10px;
+  }
+
+  .panel {
+    padding: 15px;
+  }
+
+  .fields {
+    gap: 9px;
+  }
+
+  .intro h2 {
+    font-size: 21px;
+  }
+
+  table {
+    font-size: 12px;
+  }
+}
+
+@media print {
+  header,
+  .inputs,
+  .intro,
+  .actions,
+  footer,
+  .no-print {
+    display: none !important;
+  }
+
+  body {
+    background: white;
+  }
+
+  main {
+    padding: 0;
+  }
+
+  .layout {
+    display: block;
+  }
+
+  .result {
+    position: static;
+  }
+
+  .panel {
+    box-shadow: none;
+    break-inside: avoid;
+  }
+
+  .summary {
+    background: white !important;
+    color: #14243b;
+    border: 1px solid #ddd;
+  }
+
+  .summary p,
+  .metric span {
+    color: #64748b;
+  }
+
+  .metric {
+    background: #eee;
+  }
+
+  @page {
+    size: A4;
+    margin: 12mm;
+  }
+}

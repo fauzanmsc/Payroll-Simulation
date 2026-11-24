@@ -1,0 +1,20 @@
+[
+  {
+    "id": "DUMMY-001",
+    "name": "Karyawan Contoh",
+    "basic": 2400000,
+    "position": 1000000,
+    "grade": 800000,
+    "group": 200000,
+    "communication": 200000,
+    "otherFixed": 0,
+    "incentive": 0,
+    "bonus": 0,
+    "dutyMoney": 0,
+    "otherIncome": 0,
+    "bpjsTK": 90000,
+    "bpjsKes": 48787,
+    "tax": 0,
+    "otherDeduction": 0
+  }
+]
