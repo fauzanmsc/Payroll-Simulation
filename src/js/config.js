@@ -9,6 +9,11 @@
     maximumFractionDigits: 0,
   });
 
+  const COMPACT_FORMATTER = new Intl.NumberFormat('id-ID', {
+    notation: 'compact',
+    maximumFractionDigits: 1,
+  });
+
   const SALARY_FIELDS = [
     ['basic', 'Gaji pokok', 2400000],
     ['position', 'Tunjangan jabatan', 1000000],
@@ -42,6 +47,34 @@
     '100pro': 'Kontrak 1 tahun · Prorata',
   };
 
+  const MODE_META = {
+    '80full': {
+      title: 'Kontrak 3 Bulan',
+      tag: '80% Full',
+      desc: 'Periode penuh tanpa prorata',
+    },
+    '80pro': {
+      title: 'Kontrak 3 Bulan',
+      tag: '80% Prorata',
+      desc: 'Berdasarkan hari aktif kerja',
+    },
+    transition: {
+      title: 'Transisi 3 Bln → 1 Thn',
+      tag: '80% → 100%',
+      desc: 'Berubah tarif di tanggal efektif',
+    },
+    '100full': {
+      title: 'Kontrak 1 Tahun',
+      tag: '100% Full',
+      desc: 'Periode penuh tarif 100%',
+    },
+    '100pro': {
+      title: 'Kontrak 1 Tahun',
+      tag: '100% Prorata',
+      desc: 'Tarif 100% sesuai hari aktif',
+    },
+  };
+
   const DEFAULT_INPUTS = {
     name: 'Karyawan Contoh',
     start: '2026-10-24',
@@ -62,14 +95,22 @@
     return CURRENCY_FORMATTER.format(amount);
   }
 
+  function formatCompactRupiah(amount) {
+    if (amount === 0) return 'Rp0';
+    const prefix = amount < 0 ? '-Rp' : 'Rp';
+    return prefix + COMPACT_FORMATTER.format(Math.abs(amount));
+  }
+
   PayrollStudio.config = {
     SALARY_FIELDS,
     EXTRA_FIELDS,
     DEDUCT_FIELDS,
     ALL_FIELDS,
     MODES,
+    MODE_META,
     DEFAULT_INPUTS,
     ATTENDANCE_RATE,
     formatRupiah,
+    formatCompactRupiah,
   };
 })(typeof window !== 'undefined' ? window : globalThis);
